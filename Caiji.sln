@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caiji", "Caiji\Caiji.csproj", "{DE3064F4-4AC1-4D56-8D90-BD30D9199A5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caiji.Library", "Caiji.Library\Caiji.Library.csproj", "{588C2592-52F5-4A70-9268-7286567A1999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caiji.Service", "Caiji.Service\Caiji.Service.csproj", "{9E353FDF-F47D-4F2D-A925-E2029C278C44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE3064F4-4AC1-4D56-8D90-BD30D9199A5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE3064F4-4AC1-4D56-8D90-BD30D9199A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE3064F4-4AC1-4D56-8D90-BD30D9199A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE3064F4-4AC1-4D56-8D90-BD30D9199A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{588C2592-52F5-4A70-9268-7286567A1999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{588C2592-52F5-4A70-9268-7286567A1999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{588C2592-52F5-4A70-9268-7286567A1999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{588C2592-52F5-4A70-9268-7286567A1999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E353FDF-F47D-4F2D-A925-E2029C278C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E353FDF-F47D-4F2D-A925-E2029C278C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E353FDF-F47D-4F2D-A925-E2029C278C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E353FDF-F47D-4F2D-A925-E2029C278C44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
