@@ -185,7 +185,7 @@ namespace Caiji
                     //获取医院数据
                     foreach (var hospitalDetailUrl in hospitalDetailUrls)
                     {
-                        GetHospitalData(hospitalDetailUrl, url);
+                        GetHospitalData(hospitalDetailUrl);
                     }
 
                 }
@@ -196,7 +196,7 @@ namespace Caiji
         /// 获取医院信息
         /// </summary>
         /// <param name="hospitalDetailUrl"></param>
-        public void GetHospitalData(string hospitalDetailUrl, string province)
+        public void GetHospitalData(string hospitalDetailUrl)
         {
             //医院信息过滤
             var cdhc = new[]
@@ -264,17 +264,29 @@ namespace Caiji
                 Lng = n.Value.Where(p => p.ConditionName == "lng").Select(p => p.Value).FirstOrDefault(),
                 Lat = n.Value.Where(p => p.ConditionName == "lat").Select(p => p.Value).FirstOrDefault(),
                 Url = hospitalDetailUrl,
-                Province = province,
                 Departments = new List<Department>()
-            }).ToArray();
-
-            //医院数据插入数据库
-            for (int i = 0; i < hospitalDetailResult.Length; i++)
+            }).FirstOrDefault();
+            if (hospitalDetailResult != null)
             {
+                var divisionLoop = "www.guahao.com/hospital/areahospitals";
+                var divisionConditions = new[]
+                {
+                    new Condition
+                    {
+                        Name = "division",
+                        Start = "return _smartlog(this,'NAV')\">",
+                        End = "</a>",
+                    }
+                };
+                hospitalDetailResult.Division = string.Join(",",
+                    Helper.ProcessorValue(divisionConditions, string.Empty, "utf-8", divisionLoop, html).Select(n =>
+                        n.Value.Where(p => p.ConditionName == "division").Select(p => p.Value).FirstOrDefault()
+                    ));
+                //医院数据插入数据库
                 insCount++;
                 lbl_inscount.Text = insCount.ToString();
-                lbl_insname.Text = hospitalDetailResult[i].Name;
-                _hospitalService.Insert(hospitalDetailResult[i]);
+                lbl_insname.Text = hospitalDetailResult.Name;
+                _hospitalService.Insert(hospitalDetailResult);
                 var loop = "monitor=\"hospital,hospital_order";
                 var depConditions = new[]
                 {
@@ -287,9 +299,8 @@ namespace Caiji
                 };
                 var depCodes = Helper.ProcessorValue(depConditions, string.Empty, "utf-8", loop, html).Select(n => n.Value
                     .Where(p => p.ConditionName == "code").Select(p => p.Value).FirstOrDefault()).ToArray();
-                GetDepartmentData(hospitalDetailResult[i], depCodes);
+                GetDepartmentData(hospitalDetailResult, depCodes);
             }
-
         }
 
         public void GetDepartmentData(Hospital hospital, string[] depCodes)

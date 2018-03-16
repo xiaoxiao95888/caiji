@@ -17,9 +17,9 @@ namespace Caiji.Library.Model
         public string Lng { get; set; }
         public string Lat { get; set; }
         /// <summary>
-        /// 省份
+        /// 行政区域
         /// </summary>
-        public string Province { get; set; }
+        public string Division { get; set; }
         public virtual ICollection<Department> Departments { get; set; }
         /// <summary>
         /// 医院网站
