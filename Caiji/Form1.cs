@@ -2,13 +2,9 @@
 using Caiji.Service.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Caiji.Library.Model;
 using Caiji.Model;
@@ -21,15 +17,19 @@ namespace Caiji
         private readonly IHospitalService _hospitalService;
         private readonly IDepartmentService _departmentService;
         private readonly IClientService _clientService;
-        private string currentAction;//当前动作
-        private bool loaded;//浏览器加载完毕
-        private string currentUrl;//当前浏览器地址
+        private string currentAction; //当前动作
+        private bool loaded; //浏览器加载完毕
+        private string currentUrl; //当前浏览器地址
         private int insCount = 0;
         private int clientCount = 0;
+
         /// <summary>
         /// 医院采集入口，{0}=全国 {1}=1
         /// </summary>
-        private string hospitalStartUrl = "https://www.guahao.com/hospital/area/default/2/{0}/all/不限/all/all/all/default/0/true/region_sort/p{1}";//医院入口
+        private string hospitalStartUrl =
+                "https://www.guahao.com/hospital/area/default/all/{0}/all/不限/all/all/all/default/0/true/region_sort/p{1}"
+            ; //医院入口
+
         public Form1()
         {
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
@@ -39,6 +39,7 @@ namespace Caiji
             InitializeComponent();
             Init();
         }
+
         /// <summary>
         /// 初始化页面
         /// </summary>
@@ -46,17 +47,19 @@ namespace Caiji
         {
             LoadHospital();
         }
+
         /// <summary>
         /// 加载医院入口
         /// </summary>
         public void LoadHospital()
         {
             //1、采集医院入口页面总数,假设max最大999
-            var url = string.Format(hospitalStartUrl, "上海", 999);//初始化上海医院入口
+            var url = string.Format(hospitalStartUrl, "全国", 999); //初始化全国医院入口
             currentAction = "hospital";
             webBrowser1.Navigate(url);
             webBrowser1.DocumentCompleted += WebBrowser1_DocumentCompleted;
         }
+
         /// <summary>
         /// 浏览器加载完成
         /// </summary>
@@ -79,8 +82,16 @@ namespace Caiji
         {
             if (loaded)
             {
-                var t = new Thread(Start);
-                t.Start();
+                if (string.IsNullOrEmpty(tbx.Text))
+                {
+                    MessageBox.Show("请填入URL");
+                }
+                else
+                {
+                    var t = new Thread(Start);
+                    t.Start();
+                }
+
             }
             else
             {
@@ -91,44 +102,93 @@ namespace Caiji
 
         public void Start()
         {
-            var condition = new[]
+            //首页入口
+            var rootUrls = new List<string>();
+            for (int i = 0; i < tbx.Lines.Length; i++)
             {
-                new Condition
+                if (!string.IsNullOrEmpty(tbx.Lines[i]))
                 {
-                    Name = "page",
-                    Start = "<span class=\"current\">",
-                    End = "</span>",
+                    rootUrls.Add(tbx.Lines[i]);
                 }
-            };
-            int x;
-            //最大页码数
-            var maxPage =
-                Helper.ProcessorValue(condition, webBrowser1.Url.ToString(), "utf-8", "", string.Empty)
-                    .SelectMany(n => n.Value)
-                    .Select(n => n.Value).Where(n => Int32.TryParse(n, out x)).Select(Int32.Parse).ToArray();
 
-            //拼接Url数组
-            for (var i = 1; i <= maxPage.FirstOrDefault(); i++)
+            }
+             ;
+            /*var rootUrls = new[]
             {
-                var url = string.Format(hospitalStartUrl, "上海", i);
-                //获取医院详细URL
-                var hospitalDetailUrls = Helper.ProcessorValue(new[]
-                    {
-                        new Condition
+                "https://www.guahao.com/hospital/area/default/1/北京/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/2/上海/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/29/广东/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/22/江苏/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/24/浙江/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/9/陕西/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/11/甘肃/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/21/山东/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/8/山西/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/19/湖北/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/30/湖南/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/3/天津/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/15/四川/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/25/江西/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/23/安徽/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/20/河南/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/16/河北/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/12/青海/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/5/辽宁/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/18/贵州/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/4/重庆/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/7/黑龙江/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/17/云南/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/31/广西/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/10/宁夏/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/14/西藏/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/33/内蒙古/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/32/海南/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/6/吉林/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/13/新疆/all/不限/all/all/all/default/0/true/region_sort/p{0}",
+                "https://www.guahao.com/hospital/area/default/27/福建/all/不限/all/all/all/default/0/true/region_sort/p{0}"
+            };*/
+            foreach (var item in rootUrls)
+            {
+                var condition = new[]
+                {
+                     new Condition
+                     {
+                         Name = "page",
+                         Start = "<span class=\"current\">",
+                         End = "</span>",
+                     }
+                 };
+                int x;
+                //最大页码数
+                var maxPage =
+                    Helper.ProcessorValue(condition, string.Format(item, 999), "utf-8", "", string.Empty)
+                        .SelectMany(n => n.Value)
+                        .Select(n => n.Value).Where(n => Int32.TryParse(n, out x)).Select(Int32.Parse).ToArray().FirstOrDefault();
+                maxPage = maxPage == 0 ? 1 : maxPage;
+
+                //拼接Url数组
+                for (var i = 1; i <= maxPage; i++)
+                {
+                    var url = string.Format(item, i);
+                    //获取医院详细URL
+                    var hospitalDetailUrls = Helper.ProcessorValue(new[]
                         {
-                            Name = "detailUrl",
-                            Start = "<a class=\"a\" href=\"",
-                            End = "\" target=",
-                        }
-                    }, url, "utf-8", "g-hospital-item J_hospitalItem")
-                    .Select(n => n.Value.Where(p => p.ConditionName == "detailUrl").Select(p => p.Value)
-                        .FirstOrDefault()).ToArray();
-                //获取医院数据
-                foreach (var hospitalDetailUrl in hospitalDetailUrls)
-                {
-                    GetHospitalData(hospitalDetailUrl);
-                }
+                             new Condition
+                             {
+                                 Name = "detailUrl",
+                                 Start = "<a class=\"a\" href=\"",
+                                 End = "\" target=",
+                             }
+                         }, url, "utf-8", "g-hospital-item J_hospitalItem")
+                        .Select(n => n.Value.Where(p => p.ConditionName == "detailUrl").Select(p => p.Value)
+                            .FirstOrDefault()).ToArray();
+                    //获取医院数据
+                    foreach (var hospitalDetailUrl in hospitalDetailUrls)
+                    {
+                        GetHospitalData(hospitalDetailUrl, url);
+                    }
 
+                }
             }
         }
 
@@ -136,7 +196,7 @@ namespace Caiji
         /// 获取医院信息
         /// </summary>
         /// <param name="hospitalDetailUrl"></param>
-        public void GetHospitalData(string hospitalDetailUrl)
+        public void GetHospitalData(string hospitalDetailUrl, string province)
         {
             //医院信息过滤
             var cdhc = new[]
@@ -204,8 +264,10 @@ namespace Caiji
                 Lng = n.Value.Where(p => p.ConditionName == "lng").Select(p => p.Value).FirstOrDefault(),
                 Lat = n.Value.Where(p => p.ConditionName == "lat").Select(p => p.Value).FirstOrDefault(),
                 Url = hospitalDetailUrl,
+                Province = province,
                 Departments = new List<Department>()
             }).ToArray();
+
             //医院数据插入数据库
             for (int i = 0; i < hospitalDetailResult.Length; i++)
             {
@@ -213,57 +275,64 @@ namespace Caiji
                 lbl_inscount.Text = insCount.ToString();
                 lbl_insname.Text = hospitalDetailResult[i].Name;
                 _hospitalService.Insert(hospitalDetailResult[i]);
+                var loop = "monitor=\"hospital,hospital_order";
+                var depConditions = new[]
+                {
+                    new Condition
+                    {
+                        Name = "code",
+                        Start = "monitor-div-id=\"",
+                        End = "\"",
+                    }
+                };
+                var depCodes = Helper.ProcessorValue(depConditions, string.Empty, "utf-8", loop, html).Select(n => n.Value
+                    .Where(p => p.ConditionName == "code").Select(p => p.Value).FirstOrDefault()).ToArray();
+                GetDepartmentData(hospitalDetailResult[i], depCodes);
             }
 
-            //获取医院下的科室信息
-            var loop = "monitor=\"hospital,hospital_order";
+        }
+
+        public void GetDepartmentData(Hospital hospital, string[] depCodes)
+        {
+            //获取科室信息
             var depConditions = new[]
             {
                 new Condition
                 {
-                    Name = "code",
-                    Start = "monitor-div-id=\"",
-                    End = "\"",
-                },
-                new Condition
-                {
                     Name = "name",
-                    Start = "?isStd=\"                                               >                                            ",
-                    End = "                                            </a>",
+                    Start = "<div class=\"info\"><div class=\"detail word-break\"><h1><strong>",
+                    End = "</strong>",
                 },
-                new Condition
-                {
-                    Name = "name2",
-                    Start = "isStd=\"                                               title=\"",
-                    End = "\">",
-                }
             };
-            var depDetailResult = Helper.ProcessorValue(depConditions, string.Empty, "utf-8", loop, html).Select(n => new Department
+            var i = 0;
+            foreach (var code in depCodes)
             {
-                Id = Guid.NewGuid(),
-                Name = n.Value.Where(p => p.ConditionName.Contains("name")).Select(p => p.Value).OrderByDescending(p => p.Length).FirstOrDefault(),
-                Code = n.Value.Where(p => p.ConditionName == "code").Select(p => p.Value).FirstOrDefault(),
-                HospitalId = hospitalDetailResult.Select(p => p.Id).FirstOrDefault(),
-                Url = hospitalDetailUrl,
-                Clients = new List<Client>()
-            }).ToArray();
-            //部门数据插入数据库
-
-            for (int i = 0; i < depDetailResult.Length; i++)
-            {
-                lbl_depcount.Text = (i + 1).ToString();
-                lbl_depname.Text = depDetailResult[i].Name;
-                _departmentService.Insert(depDetailResult[i]);
-                GetClientData(depDetailResult[i]);
+                i++;
+                var depUrl = string.Format("https://www.guahao.com/department/{0}?isStd=", code);
+                var depDetailResult = Helper.ProcessorValue(depConditions, depUrl, "utf-8", string.Empty).Select(n => new Department
+                {
+                    Id = Guid.NewGuid(),
+                    Name = n.Value.Where(p => p.ConditionName.Contains("name")).Select(p => p.Value).OrderByDescending(p => p.Length).FirstOrDefault(),
+                    Code = code,
+                    HospitalId = hospital.Id,
+                    Url = depUrl,
+                    Clients = new List<Client>()
+                }).FirstOrDefault();
+                if (depDetailResult != null)
+                {
+                    lbl_depcount.Text = i.ToString();
+                    lbl_depname.Text = depDetailResult.Name;
+                    _departmentService.Insert(depDetailResult);
+                    GetClientData(depDetailResult, hospital);
+                }
             }
-
         }
 
         /// <summary>
         /// 获取医生信息
         /// </summary>
         /// <param name="dep"></param>
-        public void GetClientData(Department dep)
+        public void GetClientData(Department dep, Hospital hospital)
         {
             //最大化页码数，获取maxpage
             var maxpageurl = string.Format("https://www.guahao.com/department/shiftcase/{0}?pageNo=1", dep.Code);
@@ -281,11 +350,14 @@ namespace Caiji
             var maxPage =
                 Helper.ProcessorValue(condition, maxpageurl, "utf-8", "", string.Empty)
                     .SelectMany(n => n.Value)
-                    .Select(n => n.Value).Where(n => Int32.TryParse(n, out x)).Select(Int32.Parse).ToArray();
+                    .Select(n => n.Value).Where(n => Int32.TryParse(n, out x)).Select(Int32.Parse).ToArray().FirstOrDefault();
+            maxPage = maxPage == 0 ? 1 : maxPage;
+
             //拼接Url数组
-            for (var i = 1; i <= maxPage.FirstOrDefault(); i++)
+            for (var i = 1; i <= maxPage; i++)
             {
-                var url = string.Format("https://www.guahao.com/department/shiftcase/{0}?pageNo={1}", dep.Code, i);
+                var docListUrl = string.Format("https://www.guahao.com/department/shiftcase/{0}?pageNo={1}", dep.Code, i);
+                //获取医生详细页面url
                 var loop = "g-doctor-item2 g-clear to-margin";
                 var depConditions = new[]
                 {
@@ -297,44 +369,156 @@ namespace Caiji
                     },
                     new Condition
                     {
-                        Name = "name",
-                        Start = "(this,'DOCN_1')\">                            <em>",
-                        End = "</em>",
-                    },
-                    new Condition
-                    {
                         Name = "title",
                         Start = "&nbsp;&nbsp;                    ",
                         End = "                    </dt>",
                     },
-                    new Condition
-                    {
-                        Name = "describe",
-                        Start = "<strong>擅长：</strong>",
-                        End = "            </div>",
-                    }
                 };
-
-                //获取医生信息
-                var clientDetailResult = Helper.ProcessorValue(depConditions, url, "utf-8", loop).Select(n => new Client
+                //医生编码
+                var clientCodes = Helper.ProcessorValue(depConditions, docListUrl, "utf-8", loop).Select(n => new
                 {
-                    Id = Guid.NewGuid(),
-                    Name = n.Value.Where(p => p.ConditionName.Contains("name")).Select(p => p.Value).OrderByDescending(p => p.Length).FirstOrDefault(),
                     Code = n.Value.Where(p => p.ConditionName == "code").Select(p => p.Value).FirstOrDefault(),
-                    Title = n.Value.Where(p => p.ConditionName == "title").Select(p => p.Value).FirstOrDefault(),
-                    Describe = n.Value.Where(p => p.ConditionName == "describe").Select(p => p.Value.Trim()).FirstOrDefault(),
-                    Url = url,
-                    DepartmentId = dep.Id
+                    Title = n.Value.Where(p => p.ConditionName == "title").Select(p => p.Value).FirstOrDefault()
                 }).Where(n => n.Title != null).ToArray();
-                //医生数据插入数据库
-
-                for (int j = 0; j < clientDetailResult.Length; j++)
+                var j = 0;
+                foreach (var code in clientCodes)
                 {
-                    clientCount++;
-                    lbl_clientcount.Text = (j + 1).ToString();
-                    _clientService.Insert(clientDetailResult[j]);
-                    lbl_clientcounttotal.Text = clientCount.ToString();
+                    j++;
+                    var detailUrl = string.Format("https://www.guahao.com/expert/{0}?hospDeptId={1}&hospitalId={2}",
+                        code.Code, dep.Code, hospital.Code);
+                    var clientConditions = new[]
+                    {
+                        new Condition
+                        {
+                            Name = "avatar",
+                            Start = "<div class=\"summary\">                    <p>                        <img src=\"",
+                            End = "\" alt=",
+                        },
+                        new Condition
+                        {
+                            Name = "name",
+                            Start = "<strong class=\"J_ExpertName\">",
+                            End = "</strong>",
+                        },
+                        new Condition
+                        {
+                            Name = "title",
+                            Start = "</strong>                        <span> ",
+                            End = "</span>",
+                        },
+                        new Condition
+                        {
+                            Name = "post",
+                            Start = "                        <span>/</span>                        <span>",
+                            End = "</span>",
+                        },
+                        new Condition
+                        {
+                            Name = "specialty",
+                            Start = "<b>擅长：</b>                        <span>",
+                            End = "</span>",
+                        },
+                        new Condition
+                        {
+                            Name = "describe",
+                            Start = "<b>简介：</b>                        <span>",
+                            End = "</span>",
+                        },
+
+                    };
+                    var html = Helper.GetHtmlSourceCodeFromUrl(detailUrl, "utf-8");
+                    //获取医生信息
+                    var clientDetailResult = Helper.ProcessorValue(clientConditions, string.Empty, "utf-8", string.Empty, html).Select(n => new Client
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = n.Value.Where(p => p.ConditionName.Contains("name")).Select(p => p.Value).OrderByDescending(p => p.Length).FirstOrDefault(),
+                        Code = code.Code,
+                        Title = n.Value.Where(p => p.ConditionName == "title").Select(p => p.Value).FirstOrDefault(),
+                        Describe = n.Value.Where(p => p.ConditionName == "describe").Select(p => p.Value.Trim()).FirstOrDefault(),
+                        Specialty = n.Value.Where(p => p.ConditionName == "specialty").Select(p => p.Value.Trim()).FirstOrDefault(),
+                        Post = n.Value.Where(p => p.ConditionName == "post").Select(p => p.Value.Trim()).FirstOrDefault(),
+                        AvatarUrl = n.Value.Where(p => p.ConditionName == "avatar").Select(p => p.Value.Trim()).FirstOrDefault(),
+                        Url = detailUrl,
+                        DepartmentId = dep.Id
+                    }).FirstOrDefault();
+                    if (clientDetailResult != null)
+                    {
+                        var loopFlags = "<a class=\"gb2 gb2-orange disease-bt\"";
+                        var flagsConditions = new[]
+                        {
+                            new Condition
+                            {
+                                Name = "flag",
+                                Start = "hidefocus=\"true\" title=\"",
+                                End = "\">",
+                            }
+
+                        };
+                        var flag = Helper.ProcessorValue(flagsConditions, string.Empty, "utf-8", loopFlags, html)
+                            .Select(n =>
+                                n.Value.Where(p => p.ConditionName == "flag").Select(p => p.Value).FirstOrDefault()).ToArray();
+                        if (flag.Any())
+                        {
+                            clientDetailResult.Flags = string.Join(",", flag);
+                        }
+                        clientDetailResult.Flags = string.Join(",", flag);
+                        clientCount++;
+                        lbl_clientcount.Text = j.ToString();
+                        _clientService.Insert(clientDetailResult);
+                        lbl_clientcounttotal.Text = clientCount.ToString();
+                    }
                 }
+
+                //var detailUrl = 
+                /* var loop = "g-doctor-item2 g-clear to-margin";
+                 var depConditions = new[]
+                 {
+                     new Condition
+                     {
+                         Name = "code",
+                         Start = "https://www.guahao.com/expert/",
+                         End = "?hospitalId=",
+                     },
+                     new Condition
+                     {
+                         Name = "name",
+                         Start = "(this,'DOCN_1')\">                            <em>",
+                         End = "</em>",
+                     },
+                     new Condition
+                     {
+                         Name = "title",
+                         Start = "&nbsp;&nbsp;                    ",
+                         End = "                    </dt>",
+                     },
+                     new Condition
+                     {
+                         Name = "describe",
+                         Start = "<strong>擅长：</strong>",
+                         End = "            </div>",
+                     }
+                 };
+
+                 //获取医生信息
+                 var clientDetailResult = Helper.ProcessorValue(depConditions, url, "utf-8", loop).Select(n => new Client
+                 {
+                     Id = Guid.NewGuid(),
+                     Name = n.Value.Where(p => p.ConditionName.Contains("name")).Select(p => p.Value).OrderByDescending(p => p.Length).FirstOrDefault(),
+                     Code = n.Value.Where(p => p.ConditionName == "code").Select(p => p.Value).FirstOrDefault(),
+                     Title = n.Value.Where(p => p.ConditionName == "title").Select(p => p.Value).FirstOrDefault(),
+                     Describe = n.Value.Where(p => p.ConditionName == "describe").Select(p => p.Value.Trim()).FirstOrDefault(),
+                     Url = url,
+                     DepartmentId = dep.Id
+                 }).Where(n => n.Title != null).ToArray();
+                 //医生数据插入数据库
+
+                 for (int j = 0; j < clientDetailResult.Length; j++)
+                 {
+                     clientCount++;
+                     lbl_clientcount.Text = (j + 1).ToString();
+                     _clientService.Insert(clientDetailResult[j]);
+                     lbl_clientcounttotal.Text = clientCount.ToString();
+                 }*/
 
             }
 

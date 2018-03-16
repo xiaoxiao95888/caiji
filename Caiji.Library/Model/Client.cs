@@ -26,6 +26,14 @@ namespace Caiji.Library.Model
         /// 描述
         /// </summary>
         public string Describe { get; set; }
+        /// <summary>
+        /// 特长
+        /// </summary>
+        public string Specialty { get; set; }
+        /// <summary>
+        /// 头像
+        /// </summary>
+        public string AvatarUrl { get; set; }
         public string Url { get; set; }
         /// <summary>
         /// 标签

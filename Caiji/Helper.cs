@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using Caiji.Model;
 
 namespace Caiji
@@ -36,7 +37,11 @@ namespace Caiji
         }
         public static Dictionary<string, List<CollectionResult>> ProcessorValue(Condition[] condition, string url, string encode, string loop, string htmlCode = "")
         {
-            htmlCode = string.IsNullOrEmpty(htmlCode) ? GetHtmlSourceCodeFromUrl(url, encode).Replace("\r\n", "") : htmlCode.Replace("\r\n", "");
+            htmlCode = string.IsNullOrEmpty(htmlCode) ? GetHtmlSourceCodeFromUrl(url, encode) : htmlCode;
+            htmlCode = htmlCode.Replace("\n", "");
+            htmlCode = htmlCode.Replace("\r", "");
+            htmlCode = htmlCode.Replace("\t", "");
+
             var sp = new[] { loop };
             var spValue = htmlCode.Split(sp, StringSplitOptions.RemoveEmptyEntries);
             var groupsId = 0;

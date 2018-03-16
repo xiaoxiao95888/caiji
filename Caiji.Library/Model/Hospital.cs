@@ -16,6 +16,10 @@ namespace Caiji.Library.Model
         public string TelNumber { get; set; }
         public string Lng { get; set; }
         public string Lat { get; set; }
+        /// <summary>
+        /// 省份
+        /// </summary>
+        public string Province { get; set; }
         public virtual ICollection<Department> Departments { get; set; }
         /// <summary>
         /// 医院网站

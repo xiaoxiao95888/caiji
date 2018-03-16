@@ -32,18 +32,19 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.btn_start = new System.Windows.Forms.Button();
             this.lbl_depname = new System.Windows.Forms.Label();
+            this.lbl_clientcounttotal = new System.Windows.Forms.Label();
+            this.lbl_clientcount = new System.Windows.Forms.Label();
             this.lbl_depcount = new System.Windows.Forms.Label();
             this.lbl_insname = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.lbl_inscount = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.label5 = new System.Windows.Forms.Label();
-            this.lbl_clientcount = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.lbl_clientcounttotal = new System.Windows.Forms.Label();
+            this.tbx = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -84,6 +85,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.tbx);
             this.splitContainer2.Panel2.Controls.Add(this.lbl_depname);
             this.splitContainer2.Panel2.Controls.Add(this.lbl_clientcounttotal);
             this.splitContainer2.Panel2.Controls.Add(this.lbl_clientcount);
@@ -102,7 +104,7 @@
             // 
             // btn_start
             // 
-            this.btn_start.Location = new System.Drawing.Point(119, 24);
+            this.btn_start.Location = new System.Drawing.Point(133, 24);
             this.btn_start.Name = "btn_start";
             this.btn_start.Size = new System.Drawing.Size(75, 23);
             this.btn_start.TabIndex = 0;
@@ -118,6 +120,24 @@
             this.lbl_depname.Size = new System.Drawing.Size(31, 15);
             this.lbl_depname.TabIndex = 1;
             this.lbl_depname.Text = "---";
+            // 
+            // lbl_clientcounttotal
+            // 
+            this.lbl_clientcounttotal.AutoSize = true;
+            this.lbl_clientcounttotal.Location = new System.Drawing.Point(123, 226);
+            this.lbl_clientcounttotal.Name = "lbl_clientcounttotal";
+            this.lbl_clientcounttotal.Size = new System.Drawing.Size(31, 15);
+            this.lbl_clientcounttotal.TabIndex = 1;
+            this.lbl_clientcounttotal.Text = "---";
+            // 
+            // lbl_clientcount
+            // 
+            this.lbl_clientcount.AutoSize = true;
+            this.lbl_clientcount.Location = new System.Drawing.Point(160, 175);
+            this.lbl_clientcount.Name = "lbl_clientcount";
+            this.lbl_clientcount.Size = new System.Drawing.Size(31, 15);
+            this.lbl_clientcount.TabIndex = 1;
+            this.lbl_clientcount.Text = "---";
             // 
             // lbl_depcount
             // 
@@ -145,6 +165,24 @@
             this.label4.Size = new System.Drawing.Size(112, 15);
             this.label4.TabIndex = 0;
             this.label4.Text = "当前医院部门：";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(13, 226);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(112, 15);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "总计医生数量：";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 175);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(142, 15);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "当前部门医生数量：";
             // 
             // lbl_inscount
             // 
@@ -191,41 +229,13 @@
             this.webBrowser1.Size = new System.Drawing.Size(1164, 544);
             this.webBrowser1.TabIndex = 0;
             // 
-            // label5
+            // tbx
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 175);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(142, 15);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "当前部门医生数量：";
-            // 
-            // lbl_clientcount
-            // 
-            this.lbl_clientcount.AutoSize = true;
-            this.lbl_clientcount.Location = new System.Drawing.Point(160, 175);
-            this.lbl_clientcount.Name = "lbl_clientcount";
-            this.lbl_clientcount.Size = new System.Drawing.Size(31, 15);
-            this.lbl_clientcount.TabIndex = 1;
-            this.lbl_clientcount.Text = "---";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 226);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(112, 15);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "总计医生数量：";
-            // 
-            // lbl_clientcounttotal
-            // 
-            this.lbl_clientcounttotal.AutoSize = true;
-            this.lbl_clientcounttotal.Location = new System.Drawing.Point(123, 226);
-            this.lbl_clientcounttotal.Name = "lbl_clientcounttotal";
-            this.lbl_clientcounttotal.Size = new System.Drawing.Size(31, 15);
-            this.lbl_clientcounttotal.TabIndex = 1;
-            this.lbl_clientcounttotal.Text = "---";
+            this.tbx.Location = new System.Drawing.Point(16, 274);
+            this.tbx.Multiline = true;
+            this.tbx.Name = "tbx";
+            this.tbx.Size = new System.Drawing.Size(320, 159);
+            this.tbx.TabIndex = 2;
             // 
             // Form1
             // 
@@ -266,6 +276,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lbl_clientcounttotal;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox tbx;
     }
 }
 
